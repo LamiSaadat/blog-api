@@ -7,4 +7,9 @@ router
   .get(postController.getAllPosts)
   .post(postController.createPosts);
 
+router
+  .route("/:id")
+  .delete(postController.deletePost)
+  .patch(postController.editPost);
+
 module.exports = router;
