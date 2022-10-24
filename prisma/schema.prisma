@@ -15,6 +15,7 @@ model User {
   firstName String
   lastName  String
   email     String    @unique
+  password  String    @db.VarChar(255)
   posts     Post[]
   followers Follow[]  @relation("follower")
   following Follow[]  @relation("following")
