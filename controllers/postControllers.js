@@ -12,14 +12,6 @@ exports.getAllPosts = async (req, res) => {
   res.json(allPosts);
 };
 
-exports.getUnpublishedPosts = async (req, res) => {
-  const unpubPosts = await prisma.post.findMany({
-    where: { published: false },
-    include: { author: true },
-  });
-  res.json(unpubPosts);
-};
-
 exports.createPosts = async (req, res) => {
   const { title, content, authorEmail, published } = req.body;
 
@@ -35,15 +27,15 @@ exports.createPosts = async (req, res) => {
 };
 
 exports.editPost = async (req, res) => {
-  const { id } = req.params;
+  const userId = req.decoded.userId;
   const { title, content } = req.body;
 
   const postData = await prisma.post.findUnique({
-    where: { id: Number(id) },
+    where: { id: userId },
   });
 
   const updatedPost = await prisma.post.update({
-    where: { id: Number(id) },
+    where: { id: userId },
     data: {
       title,
       content,
@@ -55,11 +47,28 @@ exports.editPost = async (req, res) => {
 };
 
 exports.deletePost = async (req, res) => {
-  const { id } = req.params;
+  const userId = req.decoded.userId;
 
   const result = await prisma.post.delete({
-    where: { id: Number(id) },
+    where: { id: userId },
+    include: {
+      author: true,
+    },
   });
 
   res.json(result);
+};
+
+//drafts
+exports.getUnpublishedPosts = async (req, res) => {
+  const userId = req.decoded.userId;
+
+  const unpubPosts = await prisma.post.findMany({
+    where: {
+      id: userId,
+      published: false,
+    },
+    include: { author: true },
+  });
+  res.json(unpubPosts);
 };
