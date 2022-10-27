@@ -7,7 +7,7 @@ exports.getAllPosts = async (req, res) => {
     where: {
       published: true,
     },
-    include: { author: true, comments: true },
+    include: { author: true, comments: true, likes: true },
   });
   res.json(allPosts);
 };
