@@ -38,6 +38,7 @@ model Post {
 
 model Like {
   id     Int  @id @default(autoincrement())
+  like Int
   user   User @relation(fields: [userId], references: [id])
   userId Int
   post   Post @relation(fields: [postId], references: [id])
