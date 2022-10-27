@@ -4,17 +4,6 @@ const { createAccessToken, sendAccessToken } = require("../utils/token");
 
 const prisma = new PrismaClient();
 
-// exports.getAllUsers = async (req, res) => {
-//   const allPosts = await prisma.user.findMany({
-//     where: {
-//       published: true,
-//     },
-//     include: { author: true },
-
-//   });
-//   res.json(allPosts);
-// };
-
 //register a user
 exports.createUser = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -56,7 +45,6 @@ exports.loginUser = async (req, res) => {
       where: { email: email },
     });
 
-    console.log(user);
     //throw error if user does not exist
     if (!user) throw new Error("User does not exist.");
 
@@ -77,4 +65,36 @@ exports.loginUser = async (req, res) => {
       error: `${err.message}`,
     });
   }
+};
+
+// //protected data
+exports.profile = async (req, res) => {
+  const userId = req.decoded.userId;
+  // console.log("user id: ", userId);
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: {
+      posts: true,
+    },
+  });
+
+  res.json(user);
+};
+
+exports.getAllUsers = async (req, res) => {
+  const allUsers = await prisma.user.findMany({
+    include: { posts: true },
+  });
+
+  res.json(allUsers);
+};
+
+exports.getUser = async (req, res) => {
+  const userId = req.params.id;
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  res.json(user);
 };
