@@ -67,20 +67,26 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-// //protected data
+//protected data
 exports.profile = async (req, res) => {
   const userId = req.decoded.userId;
   // console.log("user id: ", userId);
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: {
-      id: true,
-      firstName: true,
-      email: true,
-      posts: true,
-    },
-  });
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        firstName: true,
+        email: true,
+        posts: true,
+      },
+    });
 
-  res.json(user);
+    res.json(user);
+  } catch (err) {
+    res.send({
+      error: `${err.message}`,
+    });
+  }
 };

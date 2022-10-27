@@ -7,12 +7,19 @@ exports.comment = async (req, res) => {
   const { comment } = req.body;
   const postId = req.params.id;
 
-  const newComment = await prisma.comment.create({
-    data: {
-      userId: authorId,
-      postId: Number(postId),
-      content: comment,
-    },
-  });
-  res.json(newComment);
+  try {
+    const newComment = await prisma.comment.create({
+      data: {
+        userId: authorId,
+        postId: Number(postId),
+        content: comment,
+      },
+    });
+
+    res.json(newComment);
+  } catch (err) {
+    res.send({
+      error: `${err.message}`,
+    });
+  }
 };

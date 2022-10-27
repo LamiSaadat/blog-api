@@ -7,12 +7,19 @@ exports.addLike = async (req, res) => {
   const { like } = req.body;
   const postId = req.params.id;
 
-  const newLike = await prisma.like.create({
-    data: {
-      userId: authorId,
-      postId: Number(postId),
-      like,
-    },
-  });
-  res.json(newLike);
+  try {
+    const newLike = await prisma.like.create({
+      data: {
+        userId: authorId,
+        postId: Number(postId),
+        like,
+      },
+    });
+
+    res.json(newLike);
+  } catch (err) {
+    res.send({
+      error: `${err.message}`,
+    });
+  }
 };
