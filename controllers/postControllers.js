@@ -65,7 +65,7 @@ exports.getUnpublishedPosts = async (req, res) => {
 
   const unpubPosts = await prisma.post.findMany({
     where: {
-      id: userId,
+      authorId: userId,
       published: false,
     },
     include: { author: true },

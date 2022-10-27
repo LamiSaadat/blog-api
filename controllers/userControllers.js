@@ -74,26 +74,12 @@ exports.profile = async (req, res) => {
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    include: {
+    select: {
+      id: true,
+      firstName: true,
+      email: true,
       posts: true,
     },
-  });
-
-  res.json(user);
-};
-
-exports.getAllUsers = async (req, res) => {
-  const allUsers = await prisma.user.findMany({
-    include: { posts: true },
-  });
-
-  res.json(allUsers);
-};
-
-exports.getUser = async (req, res) => {
-  const userId = req.params.id;
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
   });
 
   res.json(user);
