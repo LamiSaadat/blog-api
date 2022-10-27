@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const postController = require("../controllers/postControllers");
+const commentController = require("../controllers/commentController");
 const { authorize } = require("../utils/authMiddleware");
 
 router
@@ -14,5 +15,7 @@ router
   .route("/:id")
   .delete(authorize, postController.deletePost)
   .patch(authorize, postController.editPost);
+
+router.route("/:id/comment").post(authorize, commentController.comment);
 
 module.exports = router;
