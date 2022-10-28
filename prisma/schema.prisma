@@ -38,7 +38,7 @@ model Post {
 
 model Like {
   id     Int  @id @default(autoincrement())
-  like Int
+  like   Boolean @default(false)
   user   User @relation(fields: [userId], references: [id])
   userId Int
   post   Post @relation(fields: [postId], references: [id])
@@ -57,6 +57,7 @@ model Comment {
 
 model Follow {
   id          Int  @id @default(autoincrement())
+  follow      Boolean @default(false)
   follower    User @relation("follower", fields: [followerId], references: [id])
   followerId  Int
   following   User @relation("following", fields: [followingId], references: [id])
