@@ -25,7 +25,7 @@ model User {
 
 model Post {
   id        Int       @id @default(autoincrement())
-  author    User      @relation(fields: [authorId], references: [id])
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   authorId  Int
   title     String    @db.VarChar(255)
   content   String
@@ -39,27 +39,30 @@ model Post {
 model Like {
   id     Int  @id @default(autoincrement())
   like   Boolean @default(false)
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
-  post   Post @relation(fields: [postId], references: [id])
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId Int
+
+  @@unique([userId, postId])
 }
 
 model Comment {
   id        Int      @id @default(autoincrement())
   content   String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
   createdAt DateTime @default(now())
 }
 
 model Follow {
-  id          Int  @id @default(autoincrement())
   follow      Boolean @default(false)
-  follower    User @relation("follower", fields: [followerId], references: [id])
+  follower    User @relation("following", fields: [followerId], references: [id], onDelete: Cascade)
   followerId  Int
-  following   User @relation("following", fields: [followingId], references: [id])
+  following   User @relation("follower", fields: [followingId], references: [id], onDelete: Cascade)
   followingId Int
+
+  @@id([followerId, followingId])
 }
