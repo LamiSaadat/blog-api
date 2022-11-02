@@ -6,6 +6,12 @@ exports.follow = async (req, res) => {
   const followerId = req.decoded.userId;
   const followingId = Number(req.params.id);
 
+  //find following user
+  //if already following user
+  //unfollow with update
+  //if not following user
+  //follow user with create
+
   try {
     if (followerId === followingId) {
       throw new Error("You can't follow yourself.");
@@ -15,6 +21,7 @@ exports.follow = async (req, res) => {
       data: {
         followerId,
         followingId: followingId,
+        follow: true,
       },
       select: {
         follower: true,

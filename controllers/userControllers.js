@@ -80,6 +80,8 @@ exports.profile = async (req, res) => {
         firstName: true,
         email: true,
         posts: true,
+        followers: true,
+        following: true,
       },
     });
 
