@@ -13,19 +13,22 @@ exports.follow = async (req, res) => {
       throw new Error("You can't follow yourself.");
     }
 
-    const newFollow = await prisma.follow.create({
-      data: {
-        follower: followerId,
-        following: {
-          connect: {
-            id: followingId,
-          },
-        },
-        follow: true,
+    const newFollow = await prisma.user.update({
+      where: {
+        id: followerId,
       },
-      select: {
-        follower: true,
-        following: true,
+      data: {
+        following: {
+          create: [
+            {
+              following: {
+                connect: {
+                  id: followingId,
+                },
+              },
+            },
+          ],
+        },
       },
     });
 
