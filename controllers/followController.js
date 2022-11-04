@@ -4,13 +4,9 @@ const prisma = new PrismaClient();
 
 exports.follow = async (req, res) => {
   const followerId = req.decoded.userId;
+  console.log(followerId);
   const followingId = Number(req.params.id);
-
-  //find following user
-  //if already following user
-  //unfollow with update
-  //if not following user
-  //follow user with create
+  console.log(followingId);
 
   try {
     if (followerId === followingId) {
@@ -19,8 +15,12 @@ exports.follow = async (req, res) => {
 
     const newFollow = await prisma.follow.create({
       data: {
-        followerId,
-        followingId: followingId,
+        follower: followerId,
+        following: {
+          connect: {
+            id: followingId,
+          },
+        },
         follow: true,
       },
       select: {
