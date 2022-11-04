@@ -11,5 +11,6 @@ router.route("/login").post(userController.loginUser);
 router.route("/profile").get(authorize, userController.profile);
 
 router.route("/:id/follow").post(authorize, followController.follow);
+router.route("/:id/unfollow").post(authorize, followController.unfollow);
 
 module.exports = router;
