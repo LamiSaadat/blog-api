@@ -17,8 +17,8 @@ model User {
   email     String    @unique
   password  String    @db.VarChar(255)
   posts     Post[]
-  followers Follow[]  @relation("follower")
-  following Follow[]  @relation("following")
+  followedBy Follow[]  @relation("following")
+  following Follow[]  @relation("follower")
   Like      Like[]
   Comment   Comment[]
 }
@@ -58,10 +58,9 @@ model Comment {
 }
 
 model Follow {
-  follow      Boolean @default(false)
-  follower    User @relation("following", fields: [followerId], references: [id], onDelete: Cascade)
+  follower    User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
   followerId  Int
-  following   User @relation("follower", fields: [followingId], references: [id], onDelete: Cascade)
+  following   User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
   followingId Int
 
   @@id([followerId, followingId])
