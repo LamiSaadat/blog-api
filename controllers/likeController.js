@@ -2,42 +2,46 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-exports.addLike = async (req, res) => {
-  const likerId = req.decoded.userId;
+//LIKE A POST
+//CREATE LIKE FOR A POST
+exports.like = async (req, res) => {
+  const userId = req.decoded.userId;
   const { like } = req.body;
   const postId = Number(req.params.id);
 
   try {
-    //find post data from post table and return likes array
-    const postData = await prisma.post.findUnique({
-      where: { id: postId },
-      include: {
-        likes: true,
-      },
-    });
-    console.log(postData.likes);
-
-    //remove like if user has already liked the post
-    // const toggleLike = await prisma.like.delete({
-    //   where: { postId: postId, userId: likerId },
-    // });
-
-    //create a new like for a post that this user has not liked yet
-    const newLike = await prisma.like.create({
+    const like = await prisma.like.create({
       data: {
-        userId: likerId,
-        postId: postId,
+        userId,
+        postId,
         like,
       },
     });
 
-    // postData.likes.forEach((obj) =>
-    //   obj.postId === postId && obj.userId === likerId
-    //     ? res.json(toggleLike)
-    //     : res.json(newLike)
-    // );
+    res.json(like);
+  } catch (err) {
+    res.send({
+      error: `${err.message}`,
+    });
+  }
+};
 
-    res.json(newLike);
+//UNLIKE A POST
+//DELETE THE RELATIONSHIP FROM THE TABLE
+exports.unlike = async (req, res) => {
+  const userId = req.decoded.userId;
+  const postId = Number(req.params.id);
+
+  try {
+    const unlike = await prisma.like.delete({
+      where: {
+        userId_postId: {
+          userId,
+          postId,
+        },
+      },
+    });
+    res.json(unlike);
   } catch (err) {
     res.send({
       error: `${err.message}`,
