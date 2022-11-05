@@ -2,7 +2,8 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-exports.getAllPosts = async (req, res) => {
+//GET ALL POSTS FOR FEED
+exports.getAllPosts = async (_req, res) => {
   try {
     const allPosts = await prisma.post.findMany({
       where: {
@@ -23,9 +24,10 @@ exports.getAllPosts = async (req, res) => {
   }
 };
 
+//CREATE NEW POSTS
 exports.createPosts = async (req, res) => {
   const { title, content, published } = req.body;
-  const userId = req.decoded.userId;
+  const { userId } = req.decoded;
 
   try {
     const result = await prisma.post.create({
@@ -49,8 +51,9 @@ exports.createPosts = async (req, res) => {
   }
 };
 
+//EDIT A POST
 exports.editPost = async (req, res) => {
-  const userId = req.decoded.userId;
+  const { userId } = req.decoded;
   const { title, content } = req.body;
 
   try {
@@ -75,8 +78,9 @@ exports.editPost = async (req, res) => {
   }
 };
 
+//DELETE A POST
 exports.deletePost = async (req, res) => {
-  const userId = req.decoded.userId;
+  const { userId } = req.decoded;
 
   try {
     const result = await prisma.post.delete({
@@ -94,9 +98,9 @@ exports.deletePost = async (req, res) => {
   }
 };
 
-//drafts
-exports.getUnpublishedPosts = async (req, res) => {
-  const userId = req.decoded.userId;
+//GET UNPUBLISHED POSTS FOR USERS
+exports.drafts = async (req, res) => {
+  const { userId } = req.decoded;
 
   try {
     const unpubPosts = await prisma.post.findMany({

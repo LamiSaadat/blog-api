@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 //LIKE A POST
 //CREATE LIKE FOR A POST
 exports.like = async (req, res) => {
-  const userId = req.decoded.userId;
+  const { userId } = req.decoded;
   const { like } = req.body;
   const postId = Number(req.params.id);
 
@@ -29,7 +29,7 @@ exports.like = async (req, res) => {
 //UNLIKE A POST
 //DELETE THE RELATIONSHIP FROM THE TABLE
 exports.unlike = async (req, res) => {
-  const userId = req.decoded.userId;
+  const { userId } = req.decoded;
   const postId = Number(req.params.id);
 
   try {

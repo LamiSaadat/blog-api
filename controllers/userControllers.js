@@ -4,7 +4,7 @@ const { createAccessToken, sendAccessToken } = require("../utils/token");
 
 const prisma = new PrismaClient();
 
-//register a user
+//REGISTER A USER
 exports.createUser = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   try {
@@ -35,10 +35,10 @@ exports.createUser = async (req, res) => {
   }
 };
 
-//login a user
+//LOGIN A USER
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
-  // console.log(email, password);
+
   try {
     //check if user exists
     const user = await prisma.user.findUnique({
@@ -67,10 +67,9 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-//protected data
+//GET PROTECTED DATA FOR USER
 exports.profile = async (req, res) => {
-  const userId = req.decoded.userId;
-  // console.log("user id: ", userId);
+  const { userId } = req.decoded;
 
   try {
     const user = await prisma.user.findUnique({

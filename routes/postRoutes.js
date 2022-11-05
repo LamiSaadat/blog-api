@@ -10,7 +10,7 @@ router
   .get(postController.getAllPosts)
   .post(authorize, postController.createPosts);
 
-router.route("/drafts").get(authorize, postController.getUnpublishedPosts);
+router.route("/drafts").get(authorize, postController.drafts);
 
 router
   .route("/:id")
