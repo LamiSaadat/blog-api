@@ -8,7 +8,7 @@ const { authorize } = require("../utils/authMiddleware");
 router
   .route("/")
   .get(postController.getAllPosts)
-  .post(postController.createPosts);
+  .post(authorize, postController.createPosts);
 
 router.route("/drafts").get(authorize, postController.getUnpublishedPosts);
 

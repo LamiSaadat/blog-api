@@ -24,7 +24,8 @@ exports.getAllPosts = async (req, res) => {
 };
 
 exports.createPosts = async (req, res) => {
-  const { title, content, authorEmail, published } = req.body;
+  const { title, content, published } = req.body;
+  const userId = req.decoded.userId;
 
   try {
     const result = await prisma.post.create({
@@ -33,7 +34,7 @@ exports.createPosts = async (req, res) => {
         content,
         author: {
           connect: {
-            email: authorEmail,
+            id: userId,
           },
         },
         published,
