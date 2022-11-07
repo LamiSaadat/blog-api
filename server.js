@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 //ROUTES
-app.use("/post", postRoutes);
+app.use("/posts", postRoutes);
 app.use("/user", userRoutes);
 
 app.listen(PORT, () => {

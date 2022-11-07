@@ -6,7 +6,7 @@ const likeController = require("../controllers/likeController");
 const { authorize } = require("../utils/authMiddleware");
 
 router
-  .route("/")
+  .route("/feed")
   .get(postController.getAllPosts)
   .post(authorize, postController.createPosts);
 

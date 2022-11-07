@@ -2,7 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-//GET ALL POSTS FOR FEED
+//GET ALL PUBLISHED POSTS FOR FEED
 exports.getAllPosts = async (_req, res) => {
   try {
     const allPosts = await prisma.post.findMany({
