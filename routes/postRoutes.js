@@ -5,10 +5,9 @@ const commentController = require("../controllers/commentController");
 const likeController = require("../controllers/likeController");
 const { authorize } = require("../utils/authMiddleware");
 
-router
-  .route("/feed")
-  .get(postController.getAllPosts)
-  .post(authorize, postController.createPosts);
+router.route("/feed").get(postController.getAllPosts);
+
+router.route("/create").post(authorize, postController.createPosts);
 
 router.route("/drafts").get(authorize, postController.drafts);
 
