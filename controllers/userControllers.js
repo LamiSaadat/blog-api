@@ -5,7 +5,7 @@ const { createAccessToken, sendAccessToken } = require("../utils/token");
 const prisma = new PrismaClient();
 
 //REGISTER A USER
-exports.createUser = async (req, res) => {
+exports.signup = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
   try {
     //check if user exists
@@ -67,9 +67,9 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-//GET PROTECTED DATA FOR USER
+//GET USER PROFILE INFO
 exports.profile = async (req, res) => {
-  const { userId } = req.decoded;
+  const userId = Number(req.params.id);
 
   try {
     const user = await prisma.user.findUnique({
@@ -81,6 +81,34 @@ exports.profile = async (req, res) => {
         posts: true,
         followedBy: true,
         following: true,
+      },
+    });
+
+    res.json(user);
+  } catch (err) {
+    res.send({
+      error: `${err.message}`,
+    });
+  }
+};
+
+//GET PROTECTED INFO FOR LOGGED IN USER
+exports.userAccount = async (req, res) => {
+  const { userId } = req.decoded;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        firstName: true,
+        email: true,
+        password: true,
+        posts: true,
+        followedBy: true,
+        following: true,
+        Like: true,
+        Comment: true,
       },
     });
 
