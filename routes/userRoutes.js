@@ -15,4 +15,6 @@ router.route("/:id/profile").get(userController.profile);
 router.route("/:id/follow").post(authorize, followController.follow);
 router.route("/:id/unfollow").post(authorize, followController.unfollow);
 
+router.route("/:id/followers").get(followController.allFollowers);
+
 module.exports = router;

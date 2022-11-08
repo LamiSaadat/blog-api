@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { use } = require("../routes/postRoutes");
 
 const prisma = new PrismaClient();
 
@@ -56,6 +57,27 @@ exports.unfollow = async (req, res) => {
       },
     });
     res.json(unfollow);
+  } catch (err) {
+    res.send({
+      error: `${err.message}`,
+    });
+  }
+};
+
+//FIND ALL FOLLOWERS FOR A USER
+exports.allFollowers = async (req, res) => {
+  const userId = Number(req.params.id);
+
+  try {
+    const followers = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        followedBy: true,
+      },
+    });
+    res.json(followers);
   } catch (err) {
     res.send({
       error: `${err.message}`,
