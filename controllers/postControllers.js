@@ -24,6 +24,29 @@ exports.getAllPosts = async (_req, res) => {
   }
 };
 
+//VIEW POST BY ID
+exports.getSinglePost = async (req, res) => {
+  const postId = Number(req.params.id);
+  console.log(postId);
+
+  try {
+    const postData = await prisma.post.findUnique({
+      where: { id: postId },
+      include: {
+        author: true,
+        comments: true,
+        likes: true,
+      },
+    });
+
+    res.json(postData);
+  } catch (err) {
+    res.send({
+      error: `${err.message}`,
+    });
+  }
+};
+
 //CREATE NEW POSTS
 exports.createPosts = async (req, res) => {
   const { title, content, published } = req.body;

@@ -13,6 +13,7 @@ router.route("/drafts").get(authorize, postController.drafts);
 
 router
   .route("/:id")
+  .get(postController.getSinglePost)
   .delete(authorize, postController.deletePost)
   .patch(authorize, postController.editPost);
 
