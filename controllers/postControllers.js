@@ -10,7 +10,15 @@ exports.getAllPosts = async (_req, res) => {
         published: true,
       },
       include: {
-        author: true,
+        author: {
+          select: {
+            id: true,
+            firstName: true,
+            posts: true,
+            followedBy: true,
+            following: true,
+          },
+        },
         comments: true,
         likes: true,
       },
