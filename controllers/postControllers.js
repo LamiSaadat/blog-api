@@ -41,7 +41,15 @@ exports.getSinglePost = async (req, res) => {
     const postData = await prisma.post.findUnique({
       where: { id: postId },
       include: {
-        author: true,
+        author: {
+          select: {
+            id: true,
+            firstName: true,
+            posts: true,
+            followedBy: true,
+            following: true,
+          },
+        },
         comments: true,
         likes: true,
       },
