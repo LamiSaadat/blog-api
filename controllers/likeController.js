@@ -10,7 +10,7 @@ exports.like = async (req, res) => {
   const postId = Number(req.params.id);
 
   try {
-    const like = await prisma.like.create({
+    const likeCreated = await prisma.like.create({
       data: {
         userId,
         postId,
@@ -18,7 +18,8 @@ exports.like = async (req, res) => {
       },
     });
 
-    res.json(like);
+    console.log(likeCreated);
+    res.json(likeCreated);
   } catch (err) {
     res.send({
       error: `${err.message}`,
