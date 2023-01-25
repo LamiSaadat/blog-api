@@ -18,7 +18,6 @@ exports.like = async (req, res) => {
       },
     });
 
-    console.log(likeCreated);
     res.json(likeCreated);
   } catch (err) {
     res.send({

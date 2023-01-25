@@ -35,7 +35,6 @@ exports.getAllPosts = async (_req, res) => {
 //VIEW POST BY ID
 exports.getSinglePost = async (req, res) => {
   const postId = Number(req.params.id);
-  console.log(postId);
 
   try {
     const postData = await prisma.post.findUnique({
