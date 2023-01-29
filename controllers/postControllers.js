@@ -14,9 +14,6 @@ exports.getAllPosts = async (_req, res) => {
           select: {
             id: true,
             firstName: true,
-            posts: true,
-            followedBy: true,
-            following: true,
           },
         },
         comments: true,
@@ -44,9 +41,6 @@ exports.getSinglePost = async (req, res) => {
           select: {
             id: true,
             firstName: true,
-            posts: true,
-            followedBy: true,
-            following: true,
           },
         },
         comments: true,
