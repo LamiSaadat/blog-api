@@ -4,7 +4,7 @@ A Hashnode inspired blog API to practice PostgreSQL and learn Prisma ORM.
 
 All passwords are hashed with bcrypt.js before they are stored in the database. JWT tokens are used to login and protect user data.
 
-## Live Instance:
+## Live Instance
 
 The DB is hosted on AWS RDS and the API is deployed on Render.
 
@@ -25,6 +25,12 @@ Go ahead and use this [link](https://blog-api-c7l2.onrender.com/posts/feed) to t
   - Comment on posts
   - Like, and then unlike posts
   - Follow/Unfollow other users
+
+
+## Project Demo
+
+https://user-images.githubusercontent.com/69886705/233851574-bc4adc35-5355-4adc-8469-535624eef9de.mov
+
 
 ## API Reference
 
