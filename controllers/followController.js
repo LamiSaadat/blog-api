@@ -2,8 +2,6 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-//FOLLOW A USER
-//CREATING A CONNECTION BETWEEN THE FOLLOWER AND THE USER BEING FOLLOWED IN THE RELATION TABLE
 exports.follow = async (req, res) => {
   const followerId = req.decoded.userId;
   const followingId = Number(req.params.id);
@@ -12,7 +10,6 @@ exports.follow = async (req, res) => {
     if (followerId === followingId) {
       throw new Error("You can't follow yourself.");
     }
-
     const newFollow = await prisma.user.update({
       where: {
         id: followerId,
@@ -31,7 +28,6 @@ exports.follow = async (req, res) => {
         },
       },
     });
-
     res.json(newFollow);
   } catch (err) {
     res.send({
@@ -40,8 +36,6 @@ exports.follow = async (req, res) => {
   }
 };
 
-//UNFOLLOW A USER
-//DELETE THE RELATIONSHIP FROM THE RELATION TABLE
 exports.unfollow = async (req, res) => {
   const followerId = req.decoded.userId;
   const followingId = Number(req.params.id);
@@ -63,7 +57,6 @@ exports.unfollow = async (req, res) => {
   }
 };
 
-//FIND ALL FOLLOWERS FOR A USER
 exports.allFollowers = async (req, res) => {
   const userId = Number(req.params.id);
 

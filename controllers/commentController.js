@@ -15,7 +15,6 @@ exports.comment = async (req, res) => {
         content: comment,
       },
     });
-
     res.json(newComment);
   } catch (err) {
     res.send({

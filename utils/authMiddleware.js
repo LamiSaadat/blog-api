@@ -4,12 +4,9 @@ const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET;
 
 exports.authorize = (req, res, next) => {
   const { authorization } = req.headers;
-  // console.log(authorization);
-
   if (!authorization) throw new Error("You need to log in.");
 
   const token = authorization.split(" ")[1];
-
   if (token === null) return res.send("No token avaialable.");
 
   jwt.verify(token, SECRET_KEY, (err, decoded) => {
@@ -17,7 +14,6 @@ exports.authorize = (req, res, next) => {
       return res.status(403).json({ success: false, message: "No token" });
     } else {
       req.decoded = decoded;
-      // console.log(req.decoded);
       next();
     }
   });

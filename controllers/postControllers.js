@@ -2,7 +2,6 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-//GET ALL PUBLISHED POSTS FOR FEED
 exports.getAllPosts = async (_req, res) => {
   try {
     const allPosts = await prisma.post.findMany({
@@ -20,7 +19,6 @@ exports.getAllPosts = async (_req, res) => {
         likes: true,
       },
     });
-
     res.json(allPosts);
   } catch (err) {
     res.send({
@@ -29,7 +27,6 @@ exports.getAllPosts = async (_req, res) => {
   }
 };
 
-//VIEW POST BY ID
 exports.getSinglePost = async (req, res) => {
   const postId = Number(req.params.id);
 
@@ -47,7 +44,6 @@ exports.getSinglePost = async (req, res) => {
         likes: true,
       },
     });
-
     res.json(postData);
   } catch (err) {
     res.send({
@@ -56,7 +52,6 @@ exports.getSinglePost = async (req, res) => {
   }
 };
 
-//CREATE NEW POSTS
 exports.createPosts = async (req, res) => {
   const { title, content, published } = req.body;
   const { userId } = req.decoded;
@@ -74,7 +69,6 @@ exports.createPosts = async (req, res) => {
         published,
       },
     });
-
     res.json(result);
   } catch (err) {
     res.send({
@@ -83,7 +77,6 @@ exports.createPosts = async (req, res) => {
   }
 };
 
-//EDIT A POST
 exports.editPost = async (req, res) => {
   const { userId } = req.decoded;
   const { title, content } = req.body;
@@ -92,7 +85,6 @@ exports.editPost = async (req, res) => {
     const postData = await prisma.post.findUnique({
       where: { id: userId },
     });
-
     const updatedPost = await prisma.post.update({
       where: { id: userId },
       data: {
@@ -101,7 +93,6 @@ exports.editPost = async (req, res) => {
         published: !postData.published,
       },
     });
-
     res.json(updatedPost);
   } catch (err) {
     res.send({
@@ -110,7 +101,6 @@ exports.editPost = async (req, res) => {
   }
 };
 
-//DELETE A POST
 exports.deletePost = async (req, res) => {
   const { userId } = req.decoded;
 
@@ -121,7 +111,6 @@ exports.deletePost = async (req, res) => {
         author: true,
       },
     });
-
     res.json(result);
   } catch (err) {
     res.send({
@@ -130,7 +119,6 @@ exports.deletePost = async (req, res) => {
   }
 };
 
-//GET UNPUBLISHED POSTS FOR USERS
 exports.drafts = async (req, res) => {
   const { userId } = req.decoded;
 
@@ -144,7 +132,6 @@ exports.drafts = async (req, res) => {
         author: true,
       },
     });
-
     res.json(unpubPosts);
   } catch (err) {
     res.send({
