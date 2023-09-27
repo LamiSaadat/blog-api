@@ -4,11 +4,47 @@ A Hashnode inspired blog API to practice PostgreSQL and learn Prisma ORM.
 
 All passwords are hashed with bcrypt.js before they are stored in the database. JWT tokens are used to login and protect user data.
 
-## Live Instance
+## Run Locally
 
-The DB is hosted on AWS RDS and the API is deployed on Render.
+Follow these steps to run a local instance of this API. (You will need node, npm, and PostgreSQL already installed.)
 
-Go ahead and use this [link](https://blog-api-c7l2.onrender.com/posts/feed) to try it out on Postman!
+### Installation
+
+1. Clone the project
+
+```bash
+  git clone git@github.com:LamiSaadat/blog-api.git
+```
+
+2. Create a new database in pgadmin.
+
+3. Install dependencies
+
+```bash
+  npm install
+```
+
+4. Run migrations
+
+```bash
+  npm run migrate
+```
+
+6. Set environment variables:
+
+Rename `.env_sample` to `.env` and change the placeholder values.
+
+```shell
+  DATABASE_URL=<postgresql://USER:PASSWORD@HOST:PORT/DATABASE>
+  ACCESS_TOKEN_SECRET=<your secret>
+  PORT=<a port number>
+```
+
+7. Start the server
+
+```bash
+  npm start
+```
 
 ## Features
 
