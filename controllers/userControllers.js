@@ -22,7 +22,7 @@ exports.signup = async (req, res) => {
         password: hashedPassword,
       },
     });
-    res.json(newUser);
+    res.status(201).json(newUser);
   } catch (err) {
     res.send({
       error: `${err.message}`,
@@ -66,7 +66,7 @@ exports.profile = async (req, res) => {
         following: true,
       },
     });
-    res.json(user);
+    res.status(200).json(user);
   } catch (err) {
     res.send({
       error: `${err.message}`,
@@ -92,7 +92,7 @@ exports.userAccount = async (req, res) => {
         Comment: true,
       },
     });
-    res.json(user);
+    res.status(200).json(user);
   } catch (err) {
     res.send({
       error: `${err.message}`,

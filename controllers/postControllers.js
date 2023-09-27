@@ -19,7 +19,7 @@ exports.getAllPosts = async (_req, res) => {
         likes: true,
       },
     });
-    res.json(allPosts);
+    res.status(200).json(allPosts);
   } catch (err) {
     res.send({
       error: `${err.message}`,
@@ -44,7 +44,7 @@ exports.getSinglePost = async (req, res) => {
         likes: true,
       },
     });
-    res.json(postData);
+    res.status(200).json(postData);
   } catch (err) {
     res.send({
       error: `${err.message}`,
@@ -69,7 +69,7 @@ exports.createPosts = async (req, res) => {
         published,
       },
     });
-    res.json(result);
+    res.status(201).json(result);
   } catch (err) {
     res.send({
       error: `${err.message}`,
@@ -93,7 +93,7 @@ exports.editPost = async (req, res) => {
         published: !postData.published,
       },
     });
-    res.json(updatedPost);
+    res.status(200).json(updatedPost);
   } catch (err) {
     res.send({
       error: `${err.message}`,
@@ -111,7 +111,7 @@ exports.deletePost = async (req, res) => {
         author: true,
       },
     });
-    res.json(result);
+    res.status(200).json(result);
   } catch (err) {
     res.send({
       error: `${err.message}`,
@@ -132,7 +132,7 @@ exports.drafts = async (req, res) => {
         author: true,
       },
     });
-    res.json(unpubPosts);
+    res.status(200).json(unpubPosts);
   } catch (err) {
     res.send({
       error: `${err.message}`,
