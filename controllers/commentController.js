@@ -7,6 +7,12 @@ exports.comment = async (req, res) => {
   const { comment } = req.body;
   const postId = req.params.id;
 
+  if (!authorId || isNaN(authorId) || authorId <= 0 || isNaN(postId) || postId <= 0 || typeof comment !== "string" || comment.trim().length === 0) {
+    return res.status(400).send({
+      error: "Invalid input data",
+    });
+  }
+
   try {
     const newComment = await prisma.comment.create({
       data: {
@@ -15,9 +21,10 @@ exports.comment = async (req, res) => {
         content: comment,
       },
     });
+
     res.json(newComment);
   } catch (err) {
-    res.send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }

@@ -6,11 +6,20 @@ const prisma = new PrismaClient();
 
 exports.signup = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
+  if (!firstName || !lastName || !email || !password) {
+    return res.status(400).send({
+      error: "Missing required fields",
+    });
+  }
   try {
     const user = await prisma.user.findUnique({
       where: { email: email },
     });
-    if (user) throw new Error("User already exists.");
+    if (user) {
+      return res.status(409).send({
+        error: "User already exists",
+      });
+    }
 
     const hashedPassword = await hash(password, 10);
 
@@ -24,7 +33,7 @@ exports.signup = async (req, res) => {
     });
     res.status(201).json(newUser);
   } catch (err) {
-    res.status(409).send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }
@@ -32,20 +41,33 @@ exports.signup = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).send({
+      error: "Missing required fields",
+    });
+  }
 
   try {
     const user = await prisma.user.findUnique({
       where: { email: email },
     });
-    if (!user) throw new Error("User does not exist.");
+    if (!user) {
+      return res.status(401).send({
+        error: "User does not exist",
+      });
+    }
 
     const checkPassword = await compare(password, user.password);
-    if (!checkPassword) throw new Error("Incorrect password.");
+    if (!checkPassword) {
+      return res.status(401).send({
+        error: "Incorrect password",
+      });
+    }
 
     const accessToken = createAccessToken(user.id)
     sendAccessToken(res, req, accessToken);
   } catch (err) {
-    res.status(401).send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }
@@ -53,6 +75,11 @@ exports.loginUser = async (req, res) => {
 
 exports.profile = async (req, res) => {
   const userId = Number(req.params.id);
+  if (isNaN(userId) || userId <= 0) {
+    return res.status(400).send({
+      error: "Invalid user ID",
+    });
+  }
 
   try {
     const user = await prisma.user.findUnique({
@@ -66,9 +93,16 @@ exports.profile = async (req, res) => {
         following: true,
       },
     });
+
+    if (!user) {
+      return res.status(404).send({
+        error: "User not found",
+      });
+    }
+
     res.status(200).json(user);
   } catch (err) {
-    res.status(404).send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }
@@ -76,6 +110,7 @@ exports.profile = async (req, res) => {
 
 exports.userAccount = async (req, res) => {
   const { userId } = req.decoded;
+  validateUser(userId)
 
   try {
     const user = await prisma.user.findUnique({
@@ -92,9 +127,16 @@ exports.userAccount = async (req, res) => {
         Comment: true,
       },
     });
+
+    if (!user) {
+      return res.status(404).send({
+        error: "User not found",
+      });
+    }
+
     res.status(200).json(user);
   } catch (err) {
-    res.status(404).send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }
