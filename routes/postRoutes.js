@@ -3,7 +3,7 @@ const router = express.Router();
 const postController = require("../controllers/postControllers");
 const commentController = require("../controllers/commentController");
 const likeController = require("../controllers/likeController");
-const { authorize } = require("../utils/authMiddleware");
+const { authorize } = require("../middlewares/authMiddleware");
 
 router.route("/feed").get(postController.getAllPosts);
 

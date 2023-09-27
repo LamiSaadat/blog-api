@@ -22,7 +22,7 @@ exports.comment = async (req, res) => {
       },
     });
 
-    res.json(newComment);
+    res.status(200).json(newComment);
   } catch (err) {
     res.status(500).send({
       error: `${err.message}`,
