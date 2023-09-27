@@ -21,7 +21,7 @@ exports.getAllPosts = async (_req, res) => {
     });
     res.status(200).json(allPosts);
   } catch (err) {
-    res.send({
+    res.status(404).send({
       error: `${err.message}`,
     });
   }
@@ -46,7 +46,7 @@ exports.getSinglePost = async (req, res) => {
     });
     res.status(200).json(postData);
   } catch (err) {
-    res.send({
+    res.status(404).send({
       error: `${err.message}`,
     });
   }
@@ -71,7 +71,7 @@ exports.createPosts = async (req, res) => {
     });
     res.status(201).json(result);
   } catch (err) {
-    res.send({
+    res.status(409).send({
       error: `${err.message}`,
     });
   }
@@ -95,7 +95,7 @@ exports.editPost = async (req, res) => {
     });
     res.status(200).json(updatedPost);
   } catch (err) {
-    res.send({
+    res.status(409).send({
       error: `${err.message}`,
     });
   }
@@ -113,7 +113,7 @@ exports.deletePost = async (req, res) => {
     });
     res.status(200).json(result);
   } catch (err) {
-    res.send({
+    res.status(404).send({
       error: `${err.message}`,
     });
   }
@@ -134,7 +134,7 @@ exports.drafts = async (req, res) => {
     });
     res.status(200).json(unpubPosts);
   } catch (err) {
-    res.send({
+    res.status(404).send({
       error: `${err.message}`,
     });
   }

@@ -24,7 +24,7 @@ exports.signup = async (req, res) => {
     });
     res.status(201).json(newUser);
   } catch (err) {
-    res.send({
+    res.status(409).send({
       error: `${err.message}`,
     });
   }
@@ -45,7 +45,7 @@ exports.loginUser = async (req, res) => {
     const accessToken = createAccessToken(user.id)
     sendAccessToken(res, req, accessToken);
   } catch (err) {
-    res.send({
+    res.status(401).send({
       error: `${err.message}`,
     });
   }
@@ -68,7 +68,7 @@ exports.profile = async (req, res) => {
     });
     res.status(200).json(user);
   } catch (err) {
-    res.send({
+    res.status(404).send({
       error: `${err.message}`,
     });
   }
@@ -94,7 +94,7 @@ exports.userAccount = async (req, res) => {
     });
     res.status(200).json(user);
   } catch (err) {
-    res.send({
+    res.status(404).send({
       error: `${err.message}`,
     });
   }
