@@ -89,9 +89,9 @@ class PostClass extends PrismaClass {
     });
   }
 
-  static async findUniquePost(userId) {
+  static async findUniquePost(postId) {
     return await this.prisma.post.findUnique({
-      where: { id: userId },
+      where: { id: postId },
     });
   }
 
@@ -110,20 +110,20 @@ class PostClass extends PrismaClass {
     });
   }
 
-  static async editPost(userId, title, content) {
+  static async editPost(postId, title, content, published) {
     return await this.prisma.post.update({
-      where: { id: userId },
+      where: { id: postId },
       data: {
         title,
         content,
-        published: !postData.published,
+        published,
       },
     });
   }
 
-  static async deletePost(userId) {
+  static async deletePost(postId) {
     return await this.prisma.post.delete({
-      where: { id: userId },
+      where: { id: postId},
       include: {
         author: true,
       },

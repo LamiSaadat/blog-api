@@ -6,7 +6,7 @@ exports.like = async (req, res) => {
   const { like } = req.body;
   const postId = Number(req.params.id);
 
-  if(!validateFields(like)) {
+  if(validateFields(req.body, [like])) {
     return res.status(400).send({
       error: "Invalid request data",
     });
@@ -25,6 +25,12 @@ exports.like = async (req, res) => {
 exports.unlike = async (req, res) => {
   const { userId } = req.decoded;
   const postId = Number(req.params.id);
+
+  if(validateFields(req.body, [postId])) {
+    return res.status(400).send({
+      error: "Invalid request data",
+    });
+  }
 
   try {
     const unlike = await LikeClass.removeLike(userId, postId)

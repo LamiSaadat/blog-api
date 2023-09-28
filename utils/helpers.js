@@ -1,5 +1,10 @@
 const validateFields = (reqBody, fields) => {
-  return fields.every((field) => field in reqBody)
+  for (const field in fields) {
+    if (!(field in reqBody)) {
+      return false
+    }
+  }
+  return true
 }
 
 module.exports = {

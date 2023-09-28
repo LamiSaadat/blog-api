@@ -1,5 +1,5 @@
 const { PostClass } = require("../services/prismaService");
-const { validateUserID, validateFields } = require("../utils/helpers")
+const { validateFields } = require("../utils/helpers")
 
 exports.getAllPosts = async (_req, res) => {
   try {
@@ -28,7 +28,7 @@ exports.getSinglePost = async (req, res) => {
   }
 
   try {
-    const postData = await PostClass.getSinglePost(postId)
+    const postData = await PostClass.getSinglePostWithDetails(postId)
     if (!postData) {
       return res.status(404).send({
         error: "Post not found",
@@ -46,9 +46,8 @@ exports.getSinglePost = async (req, res) => {
 exports.createPosts = async (req, res) => {
   const { title, content, published } = req.body;
   const { userId } = req.decoded;
-  validateUserID(userId)
 
-  if (!validateFields(req.body, [title, content, published])) {
+  if (validateFields(req.body, [title, content, published])) {
     return res.status(400).send({
       error: "Invalid request data",
     });
@@ -66,24 +65,24 @@ exports.createPosts = async (req, res) => {
 
 exports.editPost = async (req, res) => {
   const { userId } = req.decoded;
-  const { title, content } = req.body;
-  validateUserID(userId)
+  const { title, content, published } = req.body;
+  const postId = Number(req.params.id);
 
-  if (!validateFields(req.body, [title, content])) {
+  if (isNaN(postId) || postId <= 0) {
     return res.status(400).send({
-      error: "Invalid request data",
-    });
+      error: "Invalid post ID"
+    })
   }
 
   try {
-    const postData = await PostClass.findUniquePost(userId)
+    const postData = await PostClass.findUniquePost(postId)
     if (!postData) {
       return res.status(404).send({
         error: "Post not found",
       });
     }
 
-    const updatedPost = await PostClass.editPost(userId, title, content)
+    const updatedPost = await PostClass.editPost(postId, title, content, published)
     res.status(200).json(updatedPost);
   } catch (err) {
     res.status(500).send({
@@ -93,11 +92,16 @@ exports.editPost = async (req, res) => {
 };
 
 exports.deletePost = async (req, res) => {
-  const { userId } = req.decoded;
-  validateUserID(userId)
+  const postId = Number(req.params.id);
+
+  if (isNaN(postId) || postId <= 0) {
+    return res.status(400).send({
+      error: "Invalid post ID"
+    })
+  }
 
   try {
-    const result = await PostClass.deletePost(userId)
+    const result = await PostClass.deletePost(postId)
     if (!result) {
       return res.status(404).send({
         error: "Post not found",
@@ -113,7 +117,6 @@ exports.deletePost = async (req, res) => {
 
 exports.drafts = async (req, res) => {
   const { userId } = req.decoded;
-  validateUserID(userId)
 
   try {
     const unpubPosts = await PostClass.getDrafts(userId)
