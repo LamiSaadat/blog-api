@@ -1,6 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
-
-const prisma = new PrismaClient();
+const { LikeClass } = require("../services/prismaService")
 
 exports.like = async (req, res) => {
   const { userId } = req.decoded;
@@ -8,16 +6,10 @@ exports.like = async (req, res) => {
   const postId = Number(req.params.id);
 
   try {
-    const likeCreated = await prisma.like.create({
-      data: {
-        userId,
-        postId,
-        like,
-      },
-    });
-    res.json(likeCreated);
+    const likeCreated = await LikeClass.createLike(userId, postId, like)
+    res.status(201).json(likeCreated);
   } catch (err) {
-    res.send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }
@@ -28,17 +20,10 @@ exports.unlike = async (req, res) => {
   const postId = Number(req.params.id);
 
   try {
-    const unlike = await prisma.like.delete({
-      where: {
-        userId_postId: {
-          userId,
-          postId,
-        },
-      },
-    });
-    res.json(unlike);
+    const unlike = await LikeClass.removeLike(userId, postId)
+    res.status(200).json(unlike);
   } catch (err) {
-    res.send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }

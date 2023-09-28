@@ -1,7 +1,5 @@
-const { PrismaClient } = require("@prisma/client");
 const { validateUserID } = require("../utils/helpers") 
-
-const prisma = new PrismaClient();
+const { FollowClass } = require("../services/prismaService")
 
 exports.follow = async (req, res) => {
   const followerId = req.decoded.userId;
@@ -15,24 +13,7 @@ exports.follow = async (req, res) => {
         error: "You can't follow yourself",
       });
     }
-    const newFollow = await prisma.user.update({
-      where: {
-        id: followerId,
-      },
-      data: {
-        following: {
-          create: [
-            {
-              following: {
-                connect: {
-                  id: followingId,
-                },
-              },
-            },
-          ],
-        },
-      },
-    });
+    const newFollow = await FollowClass.createNewFollower(followerId, followingId)
     res.status(201).json(newFollow);
   } catch (err) {
     res.status(500).send({
@@ -53,14 +34,7 @@ exports.unfollow = async (req, res) => {
         error: "You can't unfollow yourself",
       });
     }
-    const unfollow = await prisma.follow.delete({
-      where: {
-        followerId_followingId: {
-          followerId,
-          followingId,
-        },
-      },
-    });
+    const unfollow = await FollowClass.unfollow(followerId, followingId)
     res.status(200).json(unfollow);
   } catch (err) {
     res.status(500).send({
@@ -71,18 +45,10 @@ exports.unfollow = async (req, res) => {
 
 exports.allFollowers = async (req, res) => {
   const userId = Number(req.params.id);
-  validateUserID(followerId)
-  validateUserID(followingId)
+  validateUserID(userId)
 
   try {
-    const followers = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-      select: {
-        followedBy: true,
-      },
-    });
+    const followers = await FollowClass.getAllFollowers(userId)
 
     if (!followers) {
       return res.status(404).send({

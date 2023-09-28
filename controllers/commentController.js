@@ -1,6 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
-
-const prisma = new PrismaClient();
+const { CommentClass } = require("../services/prismaService")
 
 exports.comment = async (req, res) => {
   const authorId = req.decoded.userId;
@@ -14,14 +12,7 @@ exports.comment = async (req, res) => {
   }
 
   try {
-    const newComment = await prisma.comment.create({
-      data: {
-        userId: authorId,
-        postId: Number(postId),
-        content: comment,
-      },
-    });
-
+    const newComment = await CommentClass.createComment(authorId, postId, comment)
     res.status(200).json(newComment);
   } catch (err) {
     res.status(500).send({

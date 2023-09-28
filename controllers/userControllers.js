@@ -1,8 +1,7 @@
-const { PrismaClient } = require("@prisma/client");
+const { UserClass } = require("../services/prismaService")
 const { hash, compare } = require("bcryptjs");
 const { createAccessToken, sendAccessToken } = require("../utils/token");
 
-const prisma = new PrismaClient();
 
 exports.signup = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -12,9 +11,7 @@ exports.signup = async (req, res) => {
     });
   }
   try {
-    const user = await prisma.user.findUnique({
-      where: { email: email },
-    });
+    const user = await UserClass.findUser(email)
     if (user) {
       return res.status(409).send({
         error: "User already exists",
@@ -23,14 +20,7 @@ exports.signup = async (req, res) => {
 
     const hashedPassword = await hash(password, 10);
 
-    const newUser = await prisma.user.create({
-      data: {
-        firstName,
-        lastName,
-        email,
-        password: hashedPassword,
-      },
-    });
+    const newUser = await UserClass.createUser(firstName, lastName, email, hashedPassword)
     res.status(201).json(newUser);
   } catch (err) {
     res.status(500).send({
@@ -48,9 +38,7 @@ exports.loginUser = async (req, res) => {
   }
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { email: email },
-    });
+    const user = await UserClass.findUser(email)
     if (!user) {
       return res.status(401).send({
         error: "User does not exist",
@@ -82,18 +70,7 @@ exports.profile = async (req, res) => {
   }
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        firstName: true,
-        email: true,
-        posts: true,
-        followedBy: true,
-        following: true,
-      },
-    });
-
+    const user = await UserClass.getUserProfile(userId)
     if (!user) {
       return res.status(404).send({
         error: "User not found",
@@ -113,21 +90,7 @@ exports.userAccount = async (req, res) => {
   validateUser(userId)
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        firstName: true,
-        email: true,
-        password: true,
-        posts: true,
-        followedBy: true,
-        following: true,
-        Like: true,
-        Comment: true,
-      },
-    });
-
+    const user = await UserClass.getUserAccountDetails(userId)
     if (!user) {
       return res.status(404).send({
         error: "User not found",

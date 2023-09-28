@@ -1,26 +1,9 @@
-const { PrismaClient } = require("@prisma/client");
+const { PostClass } = require("../services/prismaService");
 const { validateUserID } = require("../utils/helpers")
-
-const prisma = new PrismaClient();
 
 exports.getAllPosts = async (_req, res) => {
   try {
-    const allPosts = await prisma.post.findMany({
-      where: {
-        published: true,
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            firstName: true,
-          },
-        },
-        comments: true,
-        likes: true,
-      },
-    });
-
+    const allPosts = await PostClass.getAllPosts()
     if (!allPosts) {
       return res.status(404).send({
         error: "Posts not found",
@@ -45,20 +28,7 @@ exports.getSinglePost = async (req, res) => {
   }
 
   try {
-    const postData = await prisma.post.findUnique({
-      where: { id: postId },
-      include: {
-        author: {
-          select: {
-            id: true,
-            firstName: true,
-          },
-        },
-        comments: true,
-        likes: true,
-      },
-    });
-
+    const postData = await PostClass.getSinglePost(postId)
     if (!postData) {
       return res.status(404).send({
         error: "Post not found",
@@ -85,18 +55,7 @@ exports.createPosts = async (req, res) => {
   }
 
   try {
-    const result = await prisma.post.create({
-      data: {
-        title,
-        content,
-        author: {
-          connect: {
-            id: userId,
-          },
-        },
-        published,
-      },
-    });
+    const result = await PostClass.createPost(userId, title, content, published)
     res.status(201).json(result);
   } catch (err) {
     res.status(500).send({
@@ -117,24 +76,14 @@ exports.editPost = async (req, res) => {
   }
 
   try {
-    const postData = await prisma.post.findUnique({
-      where: { id: userId },
-    });
-
+    const postData = await PostClass.findUniquePost(userId)
     if (!postData) {
       return res.status(404).send({
         error: "Post not found",
       });
     }
 
-    const updatedPost = await prisma.post.update({
-      where: { id: userId },
-      data: {
-        title,
-        content,
-        published: !postData.published,
-      },
-    });
+    const updatedPost = await PostClass.editPost(userId, title, content)
     res.status(200).json(updatedPost);
   } catch (err) {
     res.status(500).send({
@@ -148,19 +97,12 @@ exports.deletePost = async (req, res) => {
   validateUserID(userId)
 
   try {
-    const result = await prisma.post.delete({
-      where: { id: userId },
-      include: {
-        author: true,
-      },
-    });
-
+    const result = await PostClass.deletePost(userId)
     if (!result) {
       return res.status(404).send({
         error: "Post not found",
       });
     }
-
     res.status(200).json(result);
   } catch (err) {
     res.status(500).send({
@@ -174,15 +116,7 @@ exports.drafts = async (req, res) => {
   validateUserID(userId)
 
   try {
-    const unpubPosts = await prisma.post.findMany({
-      where: {
-        authorId: userId,
-        published: false,
-      },
-      include: {
-        author: true,
-      },
-    });
+    const unpubPosts = await PostClass.getDrafts(userId)
     res.status(200).json(unpubPosts);
   } catch (err) {
     res.status(500).send({
