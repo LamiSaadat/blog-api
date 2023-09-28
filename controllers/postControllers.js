@@ -1,5 +1,5 @@
 const { PostClass } = require("../services/prismaService");
-const { validateUserID } = require("../utils/helpers")
+const { validateUserID, validateFields } = require("../utils/helpers")
 
 exports.getAllPosts = async (_req, res) => {
   try {
@@ -48,7 +48,7 @@ exports.createPosts = async (req, res) => {
   const { userId } = req.decoded;
   validateUserID(userId)
 
-  if (!title || !content || typeof published !== "boolean") {
+  if (!validateFields(req.body, [title, content, published])) {
     return res.status(400).send({
       error: "Invalid request data",
     });
@@ -69,7 +69,7 @@ exports.editPost = async (req, res) => {
   const { title, content } = req.body;
   validateUserID(userId)
 
-  if (!title || !content) {
+  if (!validateFields(req.body, [title, content])) {
     return res.status(400).send({
       error: "Invalid request data",
     });

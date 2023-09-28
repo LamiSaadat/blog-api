@@ -6,6 +6,15 @@ const validateUserID = (userId) => {
   }
 }
 
+const validateFields = (reqBody, fields) => {
+  for (const field in fields) {
+    if (!(field in reqBody)) {
+      return false
+    }
+  }
+}
+
 module.exports = {
-  validateUserID
+  validateUserID,
+  validateFields
 }

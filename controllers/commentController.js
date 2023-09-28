@@ -1,11 +1,14 @@
-const { CommentClass } = require("../services/prismaService")
+const { CommentClass } = require("../services/prismaService");
+const { validateUserID, validateFields } = require("../utils/helpers");
 
 exports.comment = async (req, res) => {
   const authorId = req.decoded.userId;
   const { comment } = req.body;
   const postId = req.params.id;
 
-  if (!authorId || isNaN(authorId) || authorId <= 0 || isNaN(postId) || postId <= 0 || typeof comment !== "string" || comment.trim().length === 0) {
+  validateUserID(authorId)
+
+  if (isNaN(postId) || postId <= 0 || typeof comment !== "string" || comment.trim().length === 0) {
     return res.status(400).send({
       error: "Invalid input data",
     });

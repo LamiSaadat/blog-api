@@ -1,11 +1,12 @@
 const { UserClass } = require("../services/prismaService")
-const { hash, compare } = require("bcryptjs");
 const { createAccessToken, sendAccessToken } = require("../utils/token");
+const { validateUserId, validateFields } = require("../utils/helpers")
+const { hash, compare } = require("bcryptjs");
 
 
 exports.signup = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
-  if (!firstName || !lastName || !email || !password) {
+  if (!validateFields(firstName, lastName, email, password)) {
     return res.status(400).send({
       error: "Missing required fields",
     });
@@ -31,7 +32,7 @@ exports.signup = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) {
+  if (!validateFields(email, password)) {
     return res.status(400).send({
       error: "Missing required fields",
     });
@@ -63,11 +64,7 @@ exports.loginUser = async (req, res) => {
 
 exports.profile = async (req, res) => {
   const userId = Number(req.params.id);
-  if (isNaN(userId) || userId <= 0) {
-    return res.status(400).send({
-      error: "Invalid user ID",
-    });
-  }
+  validateUserId(userId)
 
   try {
     const user = await UserClass.getUserProfile(userId)
@@ -87,7 +84,7 @@ exports.profile = async (req, res) => {
 
 exports.userAccount = async (req, res) => {
   const { userId } = req.decoded;
-  validateUser(userId)
+  validateUserId(userId)
 
   try {
     const user = await UserClass.getUserAccountDetails(userId)
