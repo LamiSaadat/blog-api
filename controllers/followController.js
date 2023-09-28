@@ -1,84 +1,58 @@
-const { PrismaClient } = require("@prisma/client");
+const { FollowClass } = require("../services/prismaService")
 
-const prisma = new PrismaClient();
-
-//FOLLOW A USER
-//CREATING A CONNECTION BETWEEN THE FOLLOWER AND THE USER BEING FOLLOWED IN THE RELATION TABLE
 exports.follow = async (req, res) => {
   const followerId = req.decoded.userId;
   const followingId = Number(req.params.id);
 
   try {
     if (followerId === followingId) {
-      throw new Error("You can't follow yourself.");
+      return res.status(400).send({
+        error: "You can't follow yourself",
+      });
     }
-
-    const newFollow = await prisma.user.update({
-      where: {
-        id: followerId,
-      },
-      data: {
-        following: {
-          create: [
-            {
-              following: {
-                connect: {
-                  id: followingId,
-                },
-              },
-            },
-          ],
-        },
-      },
-    });
-
-    res.json(newFollow);
+    const newFollow = await FollowClass.createNewFollower(followerId, followingId)
+    res.status(201).json(newFollow);
   } catch (err) {
-    res.send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }
 };
 
-//UNFOLLOW A USER
-//DELETE THE RELATIONSHIP FROM THE RELATION TABLE
 exports.unfollow = async (req, res) => {
   const followerId = req.decoded.userId;
   const followingId = Number(req.params.id);
 
   try {
-    const unfollow = await prisma.follow.delete({
-      where: {
-        followerId_followingId: {
-          followerId,
-          followingId,
-        },
-      },
-    });
-    res.json(unfollow);
+    if (followerId === followingId) {
+      return res.status(400).send({
+        error: "You can't unfollow yourself",
+      });
+    }
+    const unfollow = await FollowClass.unfollow(followerId, followingId)
+    res.status(200).json(unfollow);
   } catch (err) {
-    res.send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }
 };
 
-//FIND ALL FOLLOWERS FOR A USER
 exports.allFollowers = async (req, res) => {
   const userId = Number(req.params.id);
 
   try {
-    const followers = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-      select: {
-        followedBy: true,
-      },
-    });
-    res.json(followers);
+    const followers = await FollowClass.getAllFollowers(userId)
+
+    if (!followers) {
+      return res.status(404).send({
+        error: "User not found",
+      });
+    }
+
+    res.status(200).json(followers);
   } catch (err) {
-    res.send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }

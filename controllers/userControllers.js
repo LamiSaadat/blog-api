@@ -1,120 +1,100 @@
-const { PrismaClient } = require("@prisma/client");
-const { hash, compare } = require("bcryptjs");
+const { UserClass } = require("../services/prismaService")
 const { createAccessToken, sendAccessToken } = require("../utils/token");
+const { validateFields } = require("../utils/helpers")
+const { hash, compare } = require("bcryptjs");
 
-const prisma = new PrismaClient();
 
-//REGISTER A USER
 exports.signup = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
-  try {
-    //check if user exists
-    const user = await prisma.user.findUnique({
-      where: { email: email },
+  if (!validateFields(req.body, ["firstName", "lastName", "email", "password"])) {
+    return res.status(400).send({
+      error: "Missing required fields",
     });
+  }
+  try {
+    const user = await UserClass.findUser(email)
+    if (user) {
+      return res.status(409).send({
+        error: "User already exists",
+      });
+    }
 
-    //throw error if user exists
-    if (user) throw new Error("User already exists.");
-
-    //if user does not exist, hash the password
     const hashedPassword = await hash(password, 10);
 
-    const newUser = await prisma.user.create({
-      data: {
-        firstName,
-        lastName,
-        email,
-        password: hashedPassword,
-      },
-    });
-    res.json(newUser);
+    const newUser = await UserClass.createUser(firstName, lastName, email, hashedPassword)
+    res.status(201).json(newUser);
   } catch (err) {
-    res.send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }
 };
 
-//LOGIN A USER
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
+  if (!validateFields(req.body, ["email", "password"])) {
+    return res.status(400).send({
+      error: "Missing required fields",
+    });
+  }
 
   try {
-    //check if user exists
-    const user = await prisma.user.findUnique({
-      where: { email: email },
-    });
+    const user = await UserClass.findUser(email)
+    if (!user) {
+      return res.status(401).send({
+        error: "User does not exist",
+      });
+    }
 
-    //throw error if user does not exist
-    if (!user) throw new Error("User does not exist.");
-
-    //if user exists
-    //compare passwords
     const checkPassword = await compare(password, user.password);
+    if (!checkPassword) {
+      return res.status(401).send({
+        error: "Incorrect password",
+      });
+    }
 
-    //throw error if password is incorrect
-    if (!checkPassword) throw new Error("Incorrect password.");
-
-    //if password is correct, create access token
-    const accessToken = createAccessToken(user.id);
-
-    //send token
+    const accessToken = createAccessToken(user.id)
     sendAccessToken(res, req, accessToken);
   } catch (err) {
-    res.send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }
 };
 
-//GET USER PROFILE INFO
 exports.profile = async (req, res) => {
   const userId = Number(req.params.id);
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        firstName: true,
-        email: true,
-        posts: true,
-        followedBy: true,
-        following: true,
-      },
-    });
+    const user = await UserClass.getUserProfile(userId)
+    if (!user) {
+      return res.status(404).send({
+        error: "User not found",
+      });
+    }
 
-    res.json(user);
+    res.status(200).json(user);
   } catch (err) {
-    res.send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }
 };
 
-//GET PROTECTED INFO FOR LOGGED IN USER
 exports.userAccount = async (req, res) => {
   const { userId } = req.decoded;
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        id: true,
-        firstName: true,
-        email: true,
-        password: true,
-        posts: true,
-        followedBy: true,
-        following: true,
-        Like: true,
-        Comment: true,
-      },
-    });
+    const user = await UserClass.getUserAccountDetails(userId)
+    if (!user) {
+      return res.status(404).send({
+        error: "User not found",
+      });
+    }
 
-    res.json(user);
+    res.status(200).json(user);
   } catch (err) {
-    res.send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }

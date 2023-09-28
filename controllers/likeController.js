@@ -1,49 +1,54 @@
-const { PrismaClient } = require("@prisma/client");
+const { LikeClass } = require("../services/prismaService")
+const { validateFields, validatePostID } = require("../utils/helpers")
 
-const prisma = new PrismaClient();
-
-//LIKE A POST
-//CREATE LIKE FOR A POST
 exports.like = async (req, res) => {
   const { userId } = req.decoded;
   const { like } = req.body;
   const postId = Number(req.params.id);
 
-  try {
-    const likeCreated = await prisma.like.create({
-      data: {
-        userId,
-        postId,
-        like,
-      },
-    });
+  if (validatePostID(postId)) {
+    return res.status(400).send({
+      error: "Invalid post ID"
+    })
+  }
 
-    res.json(likeCreated);
+  if(!validateFields(req.body, ["like", "postId"])) {
+    return res.status(400).send({
+      error: "Invalid request data",
+    });
+  }
+
+  try {
+    const likeCreated = await LikeClass.createLike(userId, postId, like)
+    res.status(201).json(likeCreated);
   } catch (err) {
-    res.send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }
 };
 
-//UNLIKE A POST
-//DELETE THE RELATIONSHIP FROM THE TABLE
 exports.unlike = async (req, res) => {
   const { userId } = req.decoded;
   const postId = Number(req.params.id);
 
-  try {
-    const unlike = await prisma.like.delete({
-      where: {
-        userId_postId: {
-          userId,
-          postId,
-        },
-      },
+  if (validatePostID(postId)) {
+    return res.status(400).send({
+      error: "Invalid post ID"
+    })
+  }
+
+  if(!validateFields(req.body, ["postId"])) {
+    return res.status(400).send({
+      error: "Invalid request data",
     });
-    res.json(unlike);
+  }
+
+  try {
+    const unlike = await LikeClass.removeLike(userId, postId)
+    res.status(200).json(unlike);
   } catch (err) {
-    res.send({
+    res.status(500).send({
       error: `${err.message}`,
     });
   }
