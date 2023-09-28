@@ -1,6 +1,6 @@
 const { UserClass } = require("../services/prismaService")
 const { createAccessToken, sendAccessToken } = require("../utils/token");
-const { validateUserId, validateFields } = require("../utils/helpers")
+const { validateFields } = require("../utils/helpers")
 const { hash, compare } = require("bcryptjs");
 
 
@@ -64,7 +64,6 @@ exports.loginUser = async (req, res) => {
 
 exports.profile = async (req, res) => {
   const userId = Number(req.params.id);
-  validateUserId(userId)
 
   try {
     const user = await UserClass.getUserProfile(userId)
@@ -84,7 +83,6 @@ exports.profile = async (req, res) => {
 
 exports.userAccount = async (req, res) => {
   const { userId } = req.decoded;
-  validateUserId(userId)
 
   try {
     const user = await UserClass.getUserAccountDetails(userId)

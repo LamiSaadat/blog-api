@@ -1,11 +1,8 @@
-const { validateUserID } = require("../utils/helpers") 
 const { FollowClass } = require("../services/prismaService")
 
 exports.follow = async (req, res) => {
   const followerId = req.decoded.userId;
   const followingId = Number(req.params.id);
-  validateUserID(followerId)
-  validateUserID(followingId)
 
   try {
     if (followerId === followingId) {
@@ -25,8 +22,6 @@ exports.follow = async (req, res) => {
 exports.unfollow = async (req, res) => {
   const followerId = req.decoded.userId;
   const followingId = Number(req.params.id);
-  validateUserID(followerId)
-  validateUserID(followingId)
 
   try {
     if (followerId === followingId) {
@@ -45,7 +40,6 @@ exports.unfollow = async (req, res) => {
 
 exports.allFollowers = async (req, res) => {
   const userId = Number(req.params.id);
-  validateUserID(userId)
 
   try {
     const followers = await FollowClass.getAllFollowers(userId)
