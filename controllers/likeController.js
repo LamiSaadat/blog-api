@@ -1,12 +1,18 @@
 const { LikeClass } = require("../services/prismaService")
-const { validateFields } = require("../utils/helpers")
+const { validateFields, validatePostID } = require("../utils/helpers")
 
 exports.like = async (req, res) => {
   const { userId } = req.decoded;
   const { like } = req.body;
   const postId = Number(req.params.id);
 
-  if(validateFields(req.body, [like])) {
+  if (validatePostID(postId)) {
+    return res.status(400).send({
+      error: "Invalid post ID"
+    })
+  }
+
+  if(!validateFields(req.body, ["like", "postId"])) {
     return res.status(400).send({
       error: "Invalid request data",
     });
@@ -26,7 +32,13 @@ exports.unlike = async (req, res) => {
   const { userId } = req.decoded;
   const postId = Number(req.params.id);
 
-  if(validateFields(req.body, [postId])) {
+  if (validatePostID(postId)) {
+    return res.status(400).send({
+      error: "Invalid post ID"
+    })
+  }
+
+  if(!validateFields(req.body, ["postId"])) {
     return res.status(400).send({
       error: "Invalid request data",
     });

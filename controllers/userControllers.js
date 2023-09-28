@@ -6,7 +6,7 @@ const { hash, compare } = require("bcryptjs");
 
 exports.signup = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
-  if (validateFields(req.body, [firstName, lastName, email, password])) {
+  if (!validateFields(req.body, ["firstName", "lastName", "email", "password"])) {
     return res.status(400).send({
       error: "Missing required fields",
     });
@@ -32,7 +32,7 @@ exports.signup = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
-  if (validateFields(req.body, [email, password])) {
+  if (!validateFields(req.body, ["email", "password"])) {
     return res.status(400).send({
       error: "Missing required fields",
     });

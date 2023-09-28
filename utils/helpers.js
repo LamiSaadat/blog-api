@@ -1,5 +1,5 @@
 const validateFields = (reqBody, fields) => {
-  for (const field in fields) {
+  for (const field of fields) {
     if (!(field in reqBody)) {
       return false
     }
@@ -7,6 +7,14 @@ const validateFields = (reqBody, fields) => {
   return true
 }
 
+const validatePostID = postId => {
+  if (!(isNaN(postId) || postId <= 0)) {
+    return false
+  }
+  return true
+}
+
 module.exports = {
-  validateFields
+  validateFields,
+  validatePostID
 }

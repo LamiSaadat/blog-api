@@ -1,11 +1,18 @@
 const { CommentClass } = require("../services/prismaService");
+const { validatePostID } = require("../utils/helpers");
 
 exports.comment = async (req, res) => {
   const authorId = req.decoded.userId;
   const { comment } = req.body;
   const postId = req.params.id;
 
-  if (isNaN(postId) || postId <= 0 || typeof comment !== "string" || comment.trim().length === 0) {
+  if (validatePostID(postId)) {
+    return res.status(400).send({
+      error: "Invalid post ID"
+    })
+  }
+
+  if (typeof comment !== "string" || comment.trim().length === 0) {
     return res.status(400).send({
       error: "Invalid input data",
     });

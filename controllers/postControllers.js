@@ -1,5 +1,5 @@
 const { PostClass } = require("../services/prismaService");
-const { validateFields } = require("../utils/helpers")
+const { validateFields, validatePostID } = require("../utils/helpers")
 
 exports.getAllPosts = async (_req, res) => {
   try {
@@ -21,7 +21,7 @@ exports.getAllPosts = async (_req, res) => {
 exports.getSinglePost = async (req, res) => {
   const postId = Number(req.params.id);
 
-  if (isNaN(postId) || postId <= 0) {
+  if (validatePostID(postId)) {
     return res.status(400).send({
       error: "Invalid post ID"
     })
@@ -47,7 +47,7 @@ exports.createPosts = async (req, res) => {
   const { title, content, published } = req.body;
   const { userId } = req.decoded;
 
-  if (validateFields(req.body, [title, content, published])) {
+  if (!validateFields(req.body, ["title", "content", "published"])) {
     return res.status(400).send({
       error: "Invalid request data",
     });
@@ -68,7 +68,7 @@ exports.editPost = async (req, res) => {
   const { title, content, published } = req.body;
   const postId = Number(req.params.id);
 
-  if (isNaN(postId) || postId <= 0) {
+  if (validatePostID(postId)) {
     return res.status(400).send({
       error: "Invalid post ID"
     })
@@ -94,7 +94,7 @@ exports.editPost = async (req, res) => {
 exports.deletePost = async (req, res) => {
   const postId = Number(req.params.id);
 
-  if (isNaN(postId) || postId <= 0) {
+  if (validatePostID(postId)) {
     return res.status(400).send({
       error: "Invalid post ID"
     })
